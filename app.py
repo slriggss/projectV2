@@ -116,6 +116,8 @@ def two_asset_portfolio(w: float, ret_a: pd.Series, ret_b: pd.Series):
     return ann_ret, ann_vol
 
 
+
+
 # ── Sidebar – Inputs ──────────────────────────────────────────────────────────
 with st.sidebar:
     st.title("📈 Stock Analyzer")
