@@ -491,17 +491,30 @@ with tab3:
         scatter_b = st.selectbox("Stock B:", options=remaining, index=0, key="scatter_b")
 
     if scatter_a != scatter_b:
-        fig_scatter = px.scatter(
-            x=returns_stocks[scatter_a],
-            y=returns_stocks[scatter_b],
-            labels={"x": f"{scatter_a} Daily Return", "y": f"{scatter_b} Daily Return"},
-            title=f"{scatter_a} vs {scatter_b} — Daily Returns",
-            opacity=0.5,
-            trendline="ols",
-        )
+        x_vals = returns_stocks[scatter_a].dropna()
+        y_vals = returns_stocks[scatter_b].reindex(x_vals.index).dropna()
+        x_vals = x_vals.reindex(y_vals.index)
+        m, b = np.polyfit(x_vals, y_vals, 1)
+        x_line = np.linspace(x_vals.min(), x_vals.max(), 100)
+
+        fig_scatter = go.Figure()
+        fig_scatter.add_trace(go.Scatter(
+            x=x_vals, y=y_vals,
+            mode="markers",
+            marker=dict(opacity=0.5, size=4),
+            name="Daily Returns",
+        ))
+        fig_scatter.add_trace(go.Scatter(
+            x=x_line, y=m * x_line + b,
+            mode="lines", name="Trendline",
+            line=dict(color="#ff6b6b", width=2),
+        ))
         fig_scatter.update_layout(
-            template="plotly_dark",
+            title=f"{scatter_a} vs {scatter_b} — Daily Returns",
+            xaxis_title=f"{scatter_a} Daily Return",
+            yaxis_title=f"{scatter_b} Daily Return",
             xaxis_tickformat=".1%", yaxis_tickformat=".1%",
+            template="plotly_dark",
         )
         st.plotly_chart(fig_scatter, use_container_width=True)
 
