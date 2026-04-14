@@ -8,7 +8,6 @@ from plotly.subplots import make_subplots
 from scipy import stats
 from datetime import date, timedelta
 
-
 # ── Page config ──────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="Stock Analysis App",
@@ -113,8 +112,8 @@ def two_asset_portfolio(w: float, ret_a: pd.Series, ret_b: pd.Series):
     port_ret = w * ret_a + (1 - w) * ret_b
     ann_ret = port_ret.mean() * TRADING_DAYS
     cov = np.cov(ret_a, ret_b) * TRADING_DAYS  # annualised covariance matrix
-    ann_volume = np.sqrt(w**2 * cov[0, 0] + (1 - w)**2 * cov[1, 1] + 2 * w * (1 - w) * cov[0, 1])
-    return ann_ret, ann_volume
+    ann_vol = np.sqrt(w**2 * cov[0, 0] + (1 - w)**2 * cov[1, 1] + 2 * w * (1 - w) * cov[0, 1])
+    return ann_ret, ann_vol
 
 
 # ── Sidebar – Inputs ──────────────────────────────────────────────────────────
@@ -499,7 +498,6 @@ with tab3:
             title=f"{scatter_a} vs {scatter_b} — Daily Returns",
             opacity=0.5,
             trendline="ols",
-            trendline_color_override="#ff6b6b",
         )
         fig_scatter.update_layout(
             template="plotly_dark",
@@ -602,7 +600,7 @@ with tab3:
         title=f"Portfolio Volatility vs Weight on {pe_a}",
         xaxis_title=f"Weight on {pe_a} (%)",
         yaxis_title="Annualized Volatility",
-        yaxis_tickformat=".2%",
+        yaxis_tickformat=".1%",
         legend_title="Series",
         template="plotly_dark",
     )
